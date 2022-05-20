@@ -1,23 +1,15 @@
-#!groovy
-
 pipeline {
-  agent none
-  stages {
-    stage('Maven Install') {
-      agent {
+    agent {
         docker {
-          image 'maven:3.5.0'
+            image 'maven:3.8.1-adoptopenjdk-11' 
+            args '-v /root/.m2:/root/.m2' 
         }
-      }
-      steps {
-        sh 'mvn clean install'
-      }
     }
-    stage('Docker Build') {
-      agent any
-      steps {
-        sh 'docker build -t lhpfranco/simple-rest-api:V1.0.0 .'
-      }
+    stages {
+        stage('Build') { 
+            steps {
+                sh 'mvn -B -DskipTests clean package' 
+            }
+        }
     }
-  }
 }
